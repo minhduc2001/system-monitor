@@ -1,0 +1,552 @@
+basePath: /api/v1
+definitions:
+  gorm.DeletedAt:
+    properties:
+      time:
+        type: string
+      valid:
+        description: Valid is true if Time is not NULL
+        type: boolean
+    type: object
+  internal_project.Project:
+    properties:
+      args:
+        description: Additional arguments
+        type: string
+      auto_restart:
+        description: Auto-restart settings
+        type: boolean
+      command:
+        description: Command to start the service
+        type: string
+      cpu_limit:
+        description: Resource limits
+        type: string
+      created_at:
+        type: string
+      deleted_at:
+        $ref: '#/definitions/gorm.DeletedAt'
+      description:
+        type: string
+      editor:
+        description: IDE and development
+        type: string
+      editor_args:
+        description: Additional editor arguments
+        type: string
+      env_file:
+        description: Path to .env file
+        type: string
+      env_vars:
+        description: JSON object of environment variables
+        type: string
+      environment:
+        description: Environment and configuration
+        type: string
+      group:
+        $ref: '#/definitions/internal_project.ProjectGroup'
+      group_id:
+        type: integer
+      health_check_url:
+        description: Health check
+        type: string
+      health_status:
+        description: healthy, unhealthy, unknown
+        type: string
+      id:
+        type: integer
+      last_error:
+        description: Last error message
+        type: string
+      max_restarts:
+        type: integer
+      memory_limit:
+        description: Memory limit (e.g., "512Mi")
+        type: string
+      name:
+        description: Basic info
+        type: string
+      path:
+        description: Path and execution
+        type: string
+      pid:
+        description: Process ID when running
+        type: integer
+      port:
+        description: Network and ports
+        type: integer
+      ports:
+        description: JSON array of ports for complex services
+        type: string
+      restart_count:
+        type: integer
+      start_time:
+        description: When service started
+        type: string
+      status:
+        allOf:
+        - $ref: '#/definitions/internal_project.ServiceStatus'
+        description: Service management
+      stop_time:
+        description: When service stopped
+        type: string
+      type:
+        $ref: '#/definitions/internal_project.ServiceType'
+      updated_at:
+        type: string
+      working_dir:
+        description: Working directory
+        type: string
+    required:
+    - name
+    - path
+    type: object
+  internal_project.ProjectGroup:
+    properties:
+      color:
+        description: Hex color for UI
+        type: string
+      created_at:
+        type: string
+      deleted_at:
+        $ref: '#/definitions/gorm.DeletedAt'
+      description:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      projects:
+        items:
+          $ref: '#/definitions/internal_project.Project'
+        type: array
+      updated_at:
+        type: string
+    required:
+    - name
+    type: object
+  internal_project.ServiceStatus:
+    enum:
+    - stopped
+    - starting
+    - running
+    - stopping
+    - error
+    - unknown
+    - stopped
+    - starting
+    - running
+    - stopping
+    - error
+    - unknown
+    type: string
+    x-enum-varnames:
+    - StatusStopped
+    - StatusStarting
+    - StatusRunning
+    - StatusStopping
+    - StatusError
+    - StatusUnknown
+  internal_project.ServiceType:
+    enum:
+    - backend
+    - frontend
+    - worker
+    - database
+    - queue
+    - other
+    - backend
+    - frontend
+    - worker
+    - database
+    - queue
+    - other
+    type: string
+    x-enum-varnames:
+    - TypeBackend
+    - TypeFrontend
+    - TypeWorker
+    - TypeDatabase
+    - TypeQueue
+    - TypeOther
+  internal_system.SystemConfig:
+    properties:
+      alert_email:
+        description: Alert email address
+        type: string
+      alert_webhook:
+        description: Alert webhook URL
+        type: string
+      check_interval:
+        description: Check interval in seconds
+        type: integer
+      cpu_limit:
+        description: CPU usage threshold (%)
+        type: number
+      created_at:
+        type: string
+      disk_limit:
+        description: Disk usage threshold (%)
+        type: number
+      enable_alerts:
+        description: Enable alerting
+        type: boolean
+      id:
+        type: integer
+      memory_limit:
+        description: Memory usage threshold (%)
+        type: number
+      network_limit:
+        description: Network usage threshold (Mbps)
+        type: number
+      retention_days:
+        description: Metrics retention in days
+        type: integer
+      updated_at:
+        type: string
+    type: object
+externalDocs:
+  description: OpenAPI
+  url: https://swagger.io/resources/open-api/
+host: localhost:8080
+info:
+  contact:
+    email: support@swagger.io
+    name: API Support
+    url: http://www.swagger.io/support
+  description: A microservices management API built with Go and Gin
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+  termsOfService: http://swagger.io/terms/
+  title: Go Runner API
+  version: "1.0"
+paths:
+  /projects:
+    get:
+      consumes:
+      - application/json
+      description: Get a list of all projects
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of projects
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get all projects
+      tags:
+      - projects
+    post:
+      consumes:
+      - application/json
+      description: Create a new project with the provided data
+      parameters:
+      - description: Project data
+        in: body
+        name: project
+        required: true
+        schema:
+          $ref: '#/definitions/internal_project.Project'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created project
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad request
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Create a new project
+      tags:
+      - projects
+  /projects/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get a specific project by its ID
+      parameters:
+      - description: Project ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Project data
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad request
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Project not found
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get a project by ID
+      tags:
+      - projects
+  /system/alerts:
+    get:
+      consumes:
+      - application/json
+      description: Get system alerts with filtering options
+      parameters:
+      - description: Alert type filter
+        in: query
+        name: type
+        type: string
+      - description: Alert level filter
+        in: query
+        name: level
+        type: string
+      - description: Active alerts only
+        in: query
+        name: active
+        type: boolean
+      - description: Page number
+        in: query
+        name: page
+        type: integer
+      - description: Items per page
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: System alerts
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad request
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get system alerts
+      tags:
+      - system
+  /system/config:
+    get:
+      consumes:
+      - application/json
+      description: Get system monitoring configuration
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: System configuration
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get system configuration
+      tags:
+      - system
+    put:
+      consumes:
+      - application/json
+      description: Update system monitoring configuration
+      parameters:
+      - description: System configuration
+        in: body
+        name: config
+        required: true
+        schema:
+          $ref: '#/definitions/internal_system.SystemConfig'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Updated configuration
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad request
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Update system configuration
+      tags:
+      - system
+  /system/dashboard:
+    get:
+      consumes:
+      - application/json
+      description: Get system dashboard with overview information
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: System dashboard
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get system dashboard
+      tags:
+      - system
+  /system/info:
+    get:
+      consumes:
+      - application/json
+      description: Get comprehensive system information including CPU, memory, disk,
+        and network
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: System information
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get system information
+      tags:
+      - system
+  /system/metrics:
+    get:
+      consumes:
+      - application/json
+      description: Get historical system metrics with pagination
+      parameters:
+      - description: Page number
+        in: query
+        name: page
+        type: integer
+      - description: Items per page
+        in: query
+        name: limit
+        type: integer
+      - description: Hours of data to retrieve
+        in: query
+        name: hours
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: System metrics
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad request
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get system metrics
+      tags:
+      - system
+  /system/metrics/cleanup:
+    post:
+      consumes:
+      - application/json
+      description: Clear metrics older than specified days
+      parameters:
+      - description: 'Days to keep (default: 30)'
+        in: query
+        name: days
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Cleanup result
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad request
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Clear old metrics
+      tags:
+      - system
+  /system/status:
+    get:
+      consumes:
+      - application/json
+      description: Get current system status and health indicators
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: System status
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get system status
+      tags:
+      - system
+securityDefinitions:
+  BasicAuth:
+    type: basic
+swagger: "2.0"

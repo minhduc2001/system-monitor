@@ -1,0 +1,169 @@
+### Health Check
+GET http://localhost:8080/health
+
+### Root endpoint
+GET http://localhost:8080/
+
+### ===== PROJECT GROUPS =====
+
+### Get all project groups
+GET http://localhost:8080/api/v1/groups
+
+### Create a new project group
+POST http://localhost:8080/api/v1/groups
+Content-Type: application/json
+
+{
+  "name": "Backend Team",
+  "description": "Backend microservices team",
+  "color": "#3B82F6"
+}
+
+### Create another project group
+POST http://localhost:8080/api/v1/groups
+Content-Type: application/json
+
+{
+  "name": "Frontend Team",
+  "description": "Frontend applications team",
+  "color": "#10B981"
+}
+
+### Get project group by ID
+GET http://localhost:8080/api/v1/groups/1
+
+### Update project group
+PUT http://localhost:8080/api/v1/groups/1
+Content-Type: application/json
+
+{
+  "name": "Updated Backend Team",
+  "description": "Updated description"
+}
+
+### ===== PROJECTS =====
+
+### Get all projects
+GET http://localhost:8080/api/v1/projects
+
+### Create a backend microservice
+POST http://localhost:8080/api/v1/projects
+Content-Type: application/json
+
+{
+  "name": "User Service",
+  "description": "User management microservice",
+  "type": "backend",
+  "group_id": 1,
+  "path": "/path/to/user-service",
+  "command": "go run main.go",
+  "working_dir": "/path/to/user-service",
+  "port": 3001,
+  "environment": "development",
+  "editor": "vscode",
+  "health_check_url": "http://localhost:3001/health",
+  "auto_restart": true,
+  "max_restarts": 3
+}
+
+### Create a frontend service
+POST http://localhost:8080/api/v1/projects
+Content-Type: application/json
+
+{
+  "name": "Admin Dashboard",
+  "description": "Admin dashboard frontend",
+  "type": "frontend",
+  "group_id": 2,
+  "path": "/path/to/admin-dashboard",
+  "command": "npm start",
+  "working_dir": "/path/to/admin-dashboard",
+  "port": 3000,
+  "environment": "development",
+  "editor": "vscode",
+  "health_check_url": "http://localhost:3000",
+  "auto_restart": false
+}
+
+### Create a worker service
+POST http://localhost:8080/api/v1/projects
+Content-Type: application/json
+
+{
+  "name": "Email Worker",
+  "description": "Email processing worker",
+  "type": "worker",
+  "group_id": 1,
+  "path": "/path/to/email-worker",
+  "command": "python worker.py",
+  "working_dir": "/path/to/email-worker",
+  "environment": "development",
+  "editor": "vscode",
+  "auto_restart": true,
+  "max_restarts": 5
+}
+
+### Get project by ID
+GET http://localhost:8080/api/v1/projects/1
+
+### Update project
+PUT http://localhost:8080/api/v1/projects/1
+Content-Type: application/json
+
+{
+  "name": "Updated User Service",
+  "description": "Updated user management service",
+  "port": 3002
+}
+
+### ===== SERVICE MANAGEMENT =====
+
+### Get running services
+GET http://localhost:8080/api/v1/services/running
+
+### Start a service
+POST http://localhost:8080/api/v1/projects/1/start
+
+### Get project status
+GET http://localhost:8080/api/v1/projects/1/status
+
+### Start another service
+POST http://localhost:8080/api/v1/projects/2/start
+
+### Get running services again
+GET http://localhost:8080/api/v1/services/running
+
+### Stop a service
+POST http://localhost:8080/api/v1/projects/1/stop
+
+### Restart a service
+POST http://localhost:8080/api/v1/projects/2/restart
+
+### Get project logs (static)
+GET http://localhost:8080/api/v1/projects/1/logs
+
+### ===== PROJECT GROUPS MANAGEMENT =====
+
+### Get projects in a group
+GET http://localhost:8080/api/v1/groups/1/projects
+
+### Get projects in another group
+GET http://localhost:8080/api/v1/groups/2/projects
+
+### ===== WEBSOCKET TESTING =====
+# Note: WebSocket testing requires a WebSocket client
+# Endpoint: ws://localhost:8080/api/v1/projects/{id}/logs/ws
+
+### ===== CLEANUP =====
+
+### Delete a project
+DELETE http://localhost:8080/api/v1/projects/1
+
+### Delete another project
+DELETE http://localhost:8080/api/v1/projects/2
+
+### Delete project group
+DELETE http://localhost:8080/api/v1/groups/1
+
+### Delete another project group
+DELETE http://localhost:8080/api/v1/groups/2

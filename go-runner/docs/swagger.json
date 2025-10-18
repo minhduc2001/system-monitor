@@ -1,0 +1,789 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "A microservices management API built with Go and Gin",
+        "title": "Go Runner API",
+        "termsOfService": "http://swagger.io/terms/",
+        "contact": {
+            "name": "API Support",
+            "url": "http://www.swagger.io/support",
+            "email": "support@swagger.io"
+        },
+        "license": {
+            "name": "MIT",
+            "url": "https://opensource.org/licenses/MIT"
+        },
+        "version": "1.0"
+    },
+    "host": "localhost:8080",
+    "basePath": "/api/v1",
+    "paths": {
+        "/projects": {
+            "get": {
+                "description": "Get a list of all projects",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "projects"
+                ],
+                "summary": "Get all projects",
+                "responses": {
+                    "200": {
+                        "description": "List of projects",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Create a new project with the provided data",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "projects"
+                ],
+                "summary": "Create a new project",
+                "parameters": [
+                    {
+                        "description": "Project data",
+                        "name": "project",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/internal_project.Project"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created project",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/projects/{id}": {
+            "get": {
+                "description": "Get a specific project by its ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "projects"
+                ],
+                "summary": "Get a project by ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Project ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Project data",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Project not found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/system/alerts": {
+            "get": {
+                "description": "Get system alerts with filtering options",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "system"
+                ],
+                "summary": "Get system alerts",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Alert type filter",
+                        "name": "type",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Alert level filter",
+                        "name": "level",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "Active alerts only",
+                        "name": "active",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page number",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Items per page",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "System alerts",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/system/config": {
+            "get": {
+                "description": "Get system monitoring configuration",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "system"
+                ],
+                "summary": "Get system configuration",
+                "responses": {
+                    "200": {
+                        "description": "System configuration",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "Update system monitoring configuration",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "system"
+                ],
+                "summary": "Update system configuration",
+                "parameters": [
+                    {
+                        "description": "System configuration",
+                        "name": "config",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/internal_system.SystemConfig"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Updated configuration",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/system/dashboard": {
+            "get": {
+                "description": "Get system dashboard with overview information",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "system"
+                ],
+                "summary": "Get system dashboard",
+                "responses": {
+                    "200": {
+                        "description": "System dashboard",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/system/info": {
+            "get": {
+                "description": "Get comprehensive system information including CPU, memory, disk, and network",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "system"
+                ],
+                "summary": "Get system information",
+                "responses": {
+                    "200": {
+                        "description": "System information",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/system/metrics": {
+            "get": {
+                "description": "Get historical system metrics with pagination",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "system"
+                ],
+                "summary": "Get system metrics",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Page number",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Items per page",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Hours of data to retrieve",
+                        "name": "hours",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "System metrics",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/system/metrics/cleanup": {
+            "post": {
+                "description": "Clear metrics older than specified days",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "system"
+                ],
+                "summary": "Clear old metrics",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Days to keep (default: 30)",
+                        "name": "days",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Cleanup result",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/system/status": {
+            "get": {
+                "description": "Get current system status and health indicators",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "system"
+                ],
+                "summary": "Get system status",
+                "responses": {
+                    "200": {
+                        "description": "System status",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "gorm.DeletedAt": {
+            "type": "object",
+            "properties": {
+                "time": {
+                    "type": "string"
+                },
+                "valid": {
+                    "description": "Valid is true if Time is not NULL",
+                    "type": "boolean"
+                }
+            }
+        },
+        "internal_project.Project": {
+            "type": "object",
+            "required": [
+                "name",
+                "path"
+            ],
+            "properties": {
+                "args": {
+                    "description": "Additional arguments",
+                    "type": "string"
+                },
+                "auto_restart": {
+                    "description": "Auto-restart settings",
+                    "type": "boolean"
+                },
+                "command": {
+                    "description": "Command to start the service",
+                    "type": "string"
+                },
+                "cpu_limit": {
+                    "description": "Resource limits",
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "deleted_at": {
+                    "$ref": "#/definitions/gorm.DeletedAt"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "editor": {
+                    "description": "IDE and development",
+                    "type": "string"
+                },
+                "editor_args": {
+                    "description": "Additional editor arguments",
+                    "type": "string"
+                },
+                "env_file": {
+                    "description": "Path to .env file",
+                    "type": "string"
+                },
+                "env_vars": {
+                    "description": "JSON object of environment variables",
+                    "type": "string"
+                },
+                "environment": {
+                    "description": "Environment and configuration",
+                    "type": "string"
+                },
+                "group": {
+                    "$ref": "#/definitions/internal_project.ProjectGroup"
+                },
+                "group_id": {
+                    "type": "integer"
+                },
+                "health_check_url": {
+                    "description": "Health check",
+                    "type": "string"
+                },
+                "health_status": {
+                    "description": "healthy, unhealthy, unknown",
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "last_error": {
+                    "description": "Last error message",
+                    "type": "string"
+                },
+                "max_restarts": {
+                    "type": "integer"
+                },
+                "memory_limit": {
+                    "description": "Memory limit (e.g., \"512Mi\")",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "Basic info",
+                    "type": "string"
+                },
+                "path": {
+                    "description": "Path and execution",
+                    "type": "string"
+                },
+                "pid": {
+                    "description": "Process ID when running",
+                    "type": "integer"
+                },
+                "port": {
+                    "description": "Network and ports",
+                    "type": "integer"
+                },
+                "ports": {
+                    "description": "JSON array of ports for complex services",
+                    "type": "string"
+                },
+                "restart_count": {
+                    "type": "integer"
+                },
+                "start_time": {
+                    "description": "When service started",
+                    "type": "string"
+                },
+                "status": {
+                    "description": "Service management",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/internal_project.ServiceStatus"
+                        }
+                    ]
+                },
+                "stop_time": {
+                    "description": "When service stopped",
+                    "type": "string"
+                },
+                "type": {
+                    "$ref": "#/definitions/internal_project.ServiceType"
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "working_dir": {
+                    "description": "Working directory",
+                    "type": "string"
+                }
+            }
+        },
+        "internal_project.ProjectGroup": {
+            "type": "object",
+            "required": [
+                "name"
+            ],
+            "properties": {
+                "color": {
+                    "description": "Hex color for UI",
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "deleted_at": {
+                    "$ref": "#/definitions/gorm.DeletedAt"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "projects": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/internal_project.Project"
+                    }
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "internal_project.ServiceStatus": {
+            "type": "string",
+            "enum": [
+                "stopped",
+                "starting",
+                "running",
+                "stopping",
+                "error",
+                "unknown",
+                "stopped",
+                "starting",
+                "running",
+                "stopping",
+                "error",
+                "unknown"
+            ],
+            "x-enum-varnames": [
+                "StatusStopped",
+                "StatusStarting",
+                "StatusRunning",
+                "StatusStopping",
+                "StatusError",
+                "StatusUnknown"
+            ]
+        },
+        "internal_project.ServiceType": {
+            "type": "string",
+            "enum": [
+                "backend",
+                "frontend",
+                "worker",
+                "database",
+                "queue",
+                "other",
+                "backend",
+                "frontend",
+                "worker",
+                "database",
+                "queue",
+                "other"
+            ],
+            "x-enum-varnames": [
+                "TypeBackend",
+                "TypeFrontend",
+                "TypeWorker",
+                "TypeDatabase",
+                "TypeQueue",
+                "TypeOther"
+            ]
+        },
+        "internal_system.SystemConfig": {
+            "type": "object",
+            "properties": {
+                "alert_email": {
+                    "description": "Alert email address",
+                    "type": "string"
+                },
+                "alert_webhook": {
+                    "description": "Alert webhook URL",
+                    "type": "string"
+                },
+                "check_interval": {
+                    "description": "Check interval in seconds",
+                    "type": "integer"
+                },
+                "cpu_limit": {
+                    "description": "CPU usage threshold (%)",
+                    "type": "number"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "disk_limit": {
+                    "description": "Disk usage threshold (%)",
+                    "type": "number"
+                },
+                "enable_alerts": {
+                    "description": "Enable alerting",
+                    "type": "boolean"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "memory_limit": {
+                    "description": "Memory usage threshold (%)",
+                    "type": "number"
+                },
+                "network_limit": {
+                    "description": "Network usage threshold (Mbps)",
+                    "type": "number"
+                },
+                "retention_days": {
+                    "description": "Metrics retention in days",
+                    "type": "integer"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        }
+    },
+    "securityDefinitions": {
+        "BasicAuth": {
+            "type": "basic"
+        }
+    },
+    "externalDocs": {
+        "description": "OpenAPI",
+        "url": "https://swagger.io/resources/open-api/"
+    }
+}

@@ -1,0 +1,68 @@
+### Test Error Handling
+
+### 1. Test validation errors - Invalid project data
+POST http://localhost:8080/api/v1/projects
+Content-Type: application/json
+
+{
+  "name": "",
+  "description": "This is a very long description that exceeds the maximum allowed length of 500 characters. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.",
+  "type": "invalid_type",
+  "port": 99999,
+  "environment": "invalid_env",
+  "health_check_url": "invalid-url",
+  "max_restarts": 999
+}
+
+### 2. Test validation errors - Invalid group data
+POST http://localhost:8080/api/v1/groups
+Content-Type: application/json
+
+{
+  "name": "",
+  "description": "This is a very long description that exceeds the maximum allowed length of 500 characters. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.",
+  "color": "invalid-color"
+}
+
+### 3. Test not found error
+GET http://localhost:8080/api/v1/projects/99999
+
+### 4. Test invalid JSON
+POST http://localhost:8080/api/v1/projects
+Content-Type: application/json
+
+{
+  "name": "Test Project",
+  "invalid_json": 
+}
+
+### 5. Test rate limiting (send multiple requests quickly)
+GET http://localhost:8080/api/v1/projects
+
+### 6. Test invalid project ID format
+GET http://localhost:8080/api/v1/projects/invalid_id
+
+### 7. Test valid project creation (should work)
+POST http://localhost:8080/api/v1/projects
+Content-Type: application/json
+
+{
+  "name": "Valid Project",
+  "description": "A valid project for testing",
+  "type": "backend",
+  "path": "/path/to/project",
+  "port": 3000,
+  "environment": "development",
+  "health_check_url": "http://localhost:3000/health",
+  "max_restarts": 3
+}
+
+### 8. Test valid group creation (should work)
+POST http://localhost:8080/api/v1/groups
+Content-Type: application/json
+
+{
+  "name": "Valid Group",
+  "description": "A valid group for testing",
+  "color": "#FF0000"
+}

@@ -1,0 +1,45 @@
+server:
+  port: 8080
+  host: "0.0.0.0"
+  mode: "debug" # debug, release, test
+  read_timeout: 30
+  write_timeout: 30
+
+database:
+  driver: "sqlite" # sqlite, postgres, mysql
+  path: "./data/project.db" # For SQLite
+  host: "localhost" # For PostgreSQL/MySQL
+  port: 5432
+  username: "postgres"
+  password: ""
+  dbname: "go_runner"
+  sslmode: "disable"
+
+logging:
+  level: "info" # debug, info, warn, error
+  format: "json" # json, text
+  output: "stdout" # stdout, stderr, file
+
+hot_reload:
+  enabled: true
+  watch_dirs:
+    - "."
+    - "cmd"
+    - "internal"
+  exclude_dirs:
+    - "tmp"
+    - "vendor"
+    - "node_modules"
+    - ".git"
+  include_exts:
+    - ".go"
+    - ".yaml"
+    - ".yml"
+    - ".json"
+  exclude_exts:
+    - ".log"
+    - ".tmp"
+  delay: 1000 # milliseconds
+  build_cmd: "go build -o ./tmp/main.exe cmd/server/main.go"
+  run_cmd: "./tmp/main.exe"
+  log_level: "info"
