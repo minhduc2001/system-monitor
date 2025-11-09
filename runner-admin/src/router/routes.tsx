@@ -7,6 +7,10 @@ import SystemOverview from "@/pages/system/SystemOverview";
 import SystemAlerts from "@/pages/system/SystemAlerts";
 import SystemMetrics from "@/pages/system/SystemMetrics";
 import SystemProcesses from "@/pages/system/SystemProcesses";
+import ProjectsList from "@/pages/projects/ProjectsList";
+import ProjectDetail from "@/pages/projects/ProjectDetail";
+import ProjectForm from "@/pages/projects/ProjectForm";
+import Ports from "@/pages/Ports";
 import useAuthStore from "@stores/useAuthStore";
 
 function RequireAuth() {
@@ -30,6 +34,12 @@ export function AppRoutes() {
           <Route path="system/alerts" element={<SystemAlerts />} />
           <Route path="system/metrics" element={<SystemMetrics />} />
           <Route path="system/processes" element={<SystemProcesses />} />
+          <Route path="projects" element={<ProjectsList />} />
+          <Route path="projects/new" element={<ProjectForm mode="create" />} />
+          <Route path="projects/:id" element={<ProjectDetail />} />
+          <Route path="projects/:id/edit" element={<ProjectForm mode="edit" />} />
+          <Route path="projects/:id/terminal" element={<div>Terminal - Coming soon</div>} />
+          <Route path="ports" element={<Ports />} />
         </Route>
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />

@@ -131,6 +131,33 @@ func (h *Hub) BroadcastToProject(projectID uint, messageType string, data interf
 	h.mu.RUnlock()
 }
 
+// HasClientsForProject checks if there are any clients connected for a specific project
+func (h *Hub) HasClientsForProject(projectID uint) bool {
+	h.mu.RLock()
+	defer h.mu.RUnlock()
+	
+	for client := range h.clients {
+		if client.projectID == projectID {
+			return true
+		}
+	}
+	return false
+}
+
+// GetClientCountForProject returns the number of clients connected for a specific project
+func (h *Hub) GetClientCountForProject(projectID uint) int {
+	h.mu.RLock()
+	defer h.mu.RUnlock()
+	
+	count := 0
+	for client := range h.clients {
+		if client.projectID == projectID {
+			count++
+		}
+	}
+	return count
+}
+
 // BroadcastToAll sends a message to all connected clients
 func (h *Hub) BroadcastToAll(messageType string, data interface{}) {
 	message := Message{
@@ -148,9 +175,18 @@ func (h *Hub) BroadcastToAll(messageType string, data interface{}) {
 	h.broadcast <- jsonMessage
 }
 
-// HandleWebSocket handles websocket requests from clients
+// HandleWebSocket handles websocket requests from clients (legacy, for backwards compatibility)
 func (h *Hub) HandleWebSocket(c *gin.Context) {
-	projectIDStr := c.Param("projectId")
+	h.HandleProjectWebSocket(c)
+}
+
+// HandleProjectWebSocket handles websocket requests for project logs
+func (h *Hub) HandleProjectWebSocket(c *gin.Context) {
+	projectIDStr := c.Param("id") // Changed from "projectId" to "id" to match route pattern
+	if projectIDStr == "" {
+		projectIDStr = c.Query("id") // Fallback to query parameter
+	}
+	
 	projectID, err := strconv.ParseUint(projectIDStr, 10, 32)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid project ID"})
@@ -176,6 +212,9 @@ func (h *Hub) HandleWebSocket(c *gin.Context) {
 	// new goroutines
 	go client.writePump()
 	go client.readPump()
+	
+	// Start streaming logs if manager is available
+	// Note: We need to pass manager to hub, but for now we'll handle it in handler
 }
 
 // readPump pumps messages from the websocket connection to the hub

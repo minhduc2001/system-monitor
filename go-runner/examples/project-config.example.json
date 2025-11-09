@@ -1,0 +1,70 @@
+{
+  "projects": [
+    {
+      "name": "User Service",
+      "description": "User management microservice",
+      "type": "backend",
+      "group_id": 1,
+      "path": "/Users/username/projects/user-service",
+      "command": "go run main.go",
+      "args": "",
+      "working_dir": "",
+      "port": 3001,
+      "ports": "",
+      "environment": "development",
+      "env_file": ".env",
+      "env_vars": "{\"DATABASE_URL\": \"postgres://localhost:5432/users\"}",
+      "editor": "vscode",
+      "editor_args": "",
+      "health_check_url": "http://localhost:3001/health",
+      "auto_restart": true,
+      "max_restarts": 3,
+      "cpu_limit": "500m",
+      "memory_limit": "512Mi"
+    },
+    {
+      "name": "Admin Dashboard",
+      "description": "Admin frontend application",
+      "type": "frontend",
+      "group_id": 1,
+      "path": "/Users/username/projects/admin-dashboard",
+      "command": "npm start",
+      "args": "",
+      "working_dir": "",
+      "port": 3000,
+      "environment": "development",
+      "env_file": ".env.local",
+      "env_vars": "{\"API_URL\": \"http://localhost:3001\"}",
+      "editor": "vscode",
+      "health_check_url": "http://localhost:3000",
+      "auto_restart": true,
+      "max_restarts": 5
+    },
+    {
+      "name": "Email Worker",
+      "description": "Background job worker for sending emails",
+      "type": "worker",
+      "path": "/Users/username/projects/email-worker",
+      "command": "node worker.js",
+      "working_dir": "",
+      "port": 0,
+      "environment": "development",
+      "env_vars": "{\"REDIS_URL\": \"redis://localhost:6379\"}",
+      "auto_restart": true,
+      "max_restarts": 10
+    }
+  ],
+  "groups": [
+    {
+      "name": "Backend Team",
+      "description": "Backend microservices",
+      "color": "#3B82F6"
+    },
+    {
+      "name": "Frontend Team",
+      "description": "Frontend applications",
+      "color": "#10B981"
+    }
+  ]
+}
+

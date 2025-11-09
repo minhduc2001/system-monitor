@@ -1,0 +1,94 @@
+# Project Configuration Example
+# Hướng dẫn: File này dùng để import nhiều projects cùng lúc
+# Cấu trúc: projects là một mảng các project configuration
+
+projects:
+  # Project 1: Backend Service
+  - name: "User Service"
+    description: "User management microservice"
+    type: "backend"
+    group_id: 1  # Optional: ID của project group (nếu có)
+    path: "/Users/username/projects/user-service"
+    command: "go run main.go"
+    args: ""
+    working_dir: ""
+    port: 3001
+    ports: ""  # Optional: JSON array string for multiple ports
+    environment: "development"  # development, staging, production
+    env_file: ".env"
+    env_vars: '{"DATABASE_URL": "postgres://localhost:5432/users"}'
+    editor: "vscode"
+    editor_args: ""
+    health_check_url: "http://localhost:3001/health"
+    auto_restart: true
+    max_restarts: 3
+    cpu_limit: "500m"
+    memory_limit: "512Mi"
+
+  # Project 2: Frontend Service
+  - name: "Admin Dashboard"
+    description: "Admin frontend application"
+    type: "frontend"
+    group_id: 1
+    path: "/Users/username/projects/admin-dashboard"
+    command: "npm start"
+    args: ""
+    working_dir: ""
+    port: 3000
+    environment: "development"
+    env_file: ".env.local"
+    env_vars: '{"API_URL": "http://localhost:3001"}'
+    editor: "vscode"
+    health_check_url: "http://localhost:3000"
+    auto_restart: true
+    max_restarts: 5
+
+  # Project 3: Worker Service
+  - name: "Email Worker"
+    description: "Background job worker for sending emails"
+    type: "worker"
+    path: "/Users/username/projects/email-worker"
+    command: "node worker.js"
+    working_dir: ""
+    port: 0  # Workers typically don't need ports
+    environment: "development"
+    env_vars: '{"REDIS_URL": "redis://localhost:6379"}'
+    auto_restart: true
+    max_restarts: 10
+
+  # Project 4: Database Service
+  - name: "PostgreSQL"
+    description: "Local PostgreSQL database"
+    type: "database"
+    path: "/usr/local/var/postgres"
+    command: "postgres"
+    port: 5432
+    environment: "development"
+    auto_restart: true
+
+# Project Groups (Optional)
+# Nếu bạn muốn tạo groups cùng lúc với projects
+groups:
+  - name: "Backend Team"
+    description: "Backend microservices"
+    color: "#3B82F6"
+  
+  - name: "Frontend Team"
+    description: "Frontend applications"
+    color: "#10B981"
+
+# Các trường bắt buộc:
+# - name: Tên project (required)
+# - path: Đường dẫn đến project (required)
+# - type: Loại service (required): backend, frontend, worker, database, queue, other
+
+# Các trường tùy chọn:
+# - description: Mô tả project
+# - group_id: ID của project group
+# - command: Lệnh để chạy service (mặc định sẽ dựa vào type)
+# - port: Port của service
+# - environment: Môi trường (development, staging, production)
+# - auto_restart: Tự động restart khi crash
+# - health_check_url: URL để check health
+# - cpu_limit, memory_limit: Giới hạn tài nguyên
+

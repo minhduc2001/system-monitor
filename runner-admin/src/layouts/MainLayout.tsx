@@ -11,6 +11,7 @@ import {
   AlertOutlined,
   LineChartOutlined,
   ThunderboltOutlined,
+  RocketOutlined,
 } from "@ant-design/icons";
 
 const { Header, Sider, Content, Footer } = Layout;
@@ -27,16 +28,60 @@ interface AppMenuItem {
 }
 
 const rawMenuItems: AppMenuItem[] = [
-  { key: "dashboard", label: "Dashboard", path: "/", icon: <DashboardOutlined /> },
+  {
+    key: "dashboard",
+    label: "Dashboard",
+    path: "/",
+    icon: <DashboardOutlined />,
+  },
+  {
+    key: "projects",
+    label: "Projects",
+    icon: <RocketOutlined />,
+    children: [
+      {
+        key: "projects-list",
+        label: "All Projects",
+        path: "/projects",
+        icon: <AppstoreOutlined />,
+      },
+      {
+        key: "ports",
+        label: "Port Management",
+        path: "/ports",
+        icon: <ThunderboltOutlined />,
+      },
+    ],
+  },
   {
     key: "monitoring",
     label: "System Monitoring",
     icon: <MonitorOutlined />,
     children: [
-      { key: "system-overview", label: "Overview", path: "/system/overview", icon: <DashboardOutlined /> },
-      { key: "system-alerts", label: "Alerts", path: "/system/alerts", icon: <AlertOutlined /> },
-      { key: "system-metrics", label: "Metrics", path: "/system/metrics", icon: <LineChartOutlined /> },
-      { key: "system-processes", label: "Processes", path: "/system/processes", icon: <ThunderboltOutlined /> },
+      {
+        key: "system-overview",
+        label: "Overview",
+        path: "/system/overview",
+        icon: <DashboardOutlined />,
+      },
+      {
+        key: "system-alerts",
+        label: "Alerts",
+        path: "/system/alerts",
+        icon: <AlertOutlined />,
+      },
+      {
+        key: "system-metrics",
+        label: "Metrics",
+        path: "/system/metrics",
+        icon: <LineChartOutlined />,
+      },
+      {
+        key: "system-processes",
+        label: "Processes",
+        path: "/system/processes",
+        icon: <ThunderboltOutlined />,
+      },
     ],
   },
   {
@@ -44,10 +89,22 @@ const rawMenuItems: AppMenuItem[] = [
     label: "Management",
     icon: <AppstoreOutlined />,
     children: [
-      { key: "users", label: "Users", path: "/users", icon: <UserOutlined />, permission: "users:view" },
+      {
+        key: "users",
+        label: "Users",
+        path: "/users",
+        icon: <UserOutlined />,
+        permission: "users:view",
+      },
     ],
   },
-  { key: "settings", label: "Settings", path: "/settings", icon: <SettingOutlined />, roles: ["admin"] },
+  {
+    key: "settings",
+    label: "Settings",
+    path: "/settings",
+    icon: <SettingOutlined />,
+    roles: ["admin"],
+  },
 ];
 
 function filterMenuByAuth(
@@ -59,26 +116,38 @@ function filterMenuByAuth(
     .filter((item) => {
       if (item.hidden) return false;
       if (item.permission && !hasPermission(item.permission)) return false;
-      if (item.roles && item.roles.length > 0 && !item.roles.some((r) => hasRole(r))) return false;
+      if (
+        item.roles &&
+        item.roles.length > 0 &&
+        !item.roles.some((r) => hasRole(r))
+      )
+        return false;
       return true;
     })
     .map((item) => ({
       ...item,
-      children: item.children ? filterMenuByAuth(item.children, hasPermission, hasRole) : undefined,
+      children: item.children
+        ? filterMenuByAuth(item.children, hasPermission, hasRole)
+        : undefined,
     }));
 }
 
 type AntdMenuItem = Required<MenuProps>["items"][number];
 function buildAntdMenuItems(items: AppMenuItem[]): AntdMenuItem[] {
-  return items.map((item): AntdMenuItem => ({
-    key: item.key,
-    label: item.label,
-    icon: item.icon,
-    children: item.children ? buildAntdMenuItems(item.children) : undefined,
-  }));
+  return items.map(
+    (item): AntdMenuItem => ({
+      key: item.key,
+      label: item.label,
+      icon: item.icon,
+      children: item.children ? buildAntdMenuItems(item.children) : undefined,
+    })
+  );
 }
 
-function findItemByKey(items: AppMenuItem[], key: string): AppMenuItem | undefined {
+function findItemByKey(
+  items: AppMenuItem[],
+  key: string
+): AppMenuItem | undefined {
   for (const item of items) {
     if (item.key === key) return item;
     if (item.children) {
@@ -89,7 +158,10 @@ function findItemByKey(items: AppMenuItem[], key: string): AppMenuItem | undefin
   return undefined;
 }
 
-function findItemByPath(items: AppMenuItem[], path: string): AppMenuItem | undefined {
+function findItemByPath(
+  items: AppMenuItem[],
+  path: string
+): AppMenuItem | undefined {
   for (const item of items) {
     if (item.path === path) return item;
     if (item.children) {
@@ -100,7 +172,11 @@ function findItemByPath(items: AppMenuItem[], path: string): AppMenuItem | undef
   return undefined;
 }
 
-function findParentKeys(items: AppMenuItem[], key: string, trail: string[] = []): string[] {
+function findParentKeys(
+  items: AppMenuItem[],
+  key: string,
+  trail: string[] = []
+): string[] {
   for (const item of items) {
     if (item.key === key) return trail;
     if (item.children) {
@@ -119,7 +195,10 @@ export default function MainLayout() {
   const { token: antdToken } = theme.useToken();
   const { hasPermission, hasRole, logout, user } = useAuthStore();
 
-  const filteredItems = React.useMemo(() => filterMenuByAuth(rawMenuItems, hasPermission, hasRole), [hasPermission, hasRole]);
+  const filteredItems = React.useMemo(
+    () => filterMenuByAuth(rawMenuItems, hasPermission, hasRole),
+    [hasPermission, hasRole]
+  );
 
   const selectedKeys = React.useMemo(() => {
     const match = findItemByPath(filteredItems, location.pathname);
@@ -145,12 +224,22 @@ export default function MainLayout() {
     ],
   };
 
-  const itemsForMenu = React.useMemo(() => buildAntdMenuItems(filteredItems), [filteredItems]);
+  const itemsForMenu = React.useMemo(
+    () => buildAntdMenuItems(filteredItems),
+    [filteredItems]
+  );
 
   return (
     <Layout style={{ minHeight: "100vh" }}>
       <Sider collapsible collapsed={collapsed} onCollapse={setCollapsed}>
-        <div style={{ height: 48, margin: 16, background: "rgba(255,255,255,0.2)", borderRadius: 6 }} />
+        <div
+          style={{
+            height: 48,
+            margin: 16,
+            background: "rgba(255,255,255,0.2)",
+            borderRadius: 6,
+          }}
+        />
         <Menu
           theme="dark"
           mode="inline"
@@ -181,13 +270,20 @@ export default function MainLayout() {
           </div>
         </Header>
         <Content style={{ margin: 16 }}>
-          <div style={{ padding: 16, minHeight: 360, background: antdToken.colorBgContainer }}>
+          <div
+            style={{
+              padding: 16,
+              minHeight: 360,
+              background: antdToken.colorBgContainer,
+            }}
+          >
             <Outlet />
           </div>
         </Content>
-        <Footer style={{ textAlign: "center" }}>© {new Date().getFullYear()} SourceZone</Footer>
+        <Footer style={{ textAlign: "center" }}>
+          © {new Date().getFullYear()} SourceZone
+        </Footer>
       </Layout>
     </Layout>
   );
 }
-

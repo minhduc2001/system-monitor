@@ -94,6 +94,9 @@ type Project struct {
 	// Resource limits
 	CPULimit    string `json:"cpu_limit"`    // CPU limit (e.g., "500m")
 	MemoryLimit string `json:"memory_limit"` // Memory limit (e.g., "512Mi")
+	
+	// Logs storage (JSON array of log lines, last 1000 lines)
+	Logs string `json:"logs" gorm:"type:text"` // JSON array of log lines
 }
 
 // CreateProjectRequest represents the request to create a new project
